@@ -80,15 +80,13 @@ GitHub Actions is the tool used to automate the build, test, containerization, s
 
 ### Branches
 
-![Branches](/images/branch.jpg)
+![Branches](/images/branch.png)
 
 ### Commit History
 
 feature/dev
-![Feature Commit History](/images/ch_feature.jpg)
+![Feature Commit History](/images/commits.png)
 
-master
-![Master Commit History](/images/ch_master.jpg)
 
 ### Pipelines
 
