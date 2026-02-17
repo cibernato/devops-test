@@ -1,0 +1,77 @@
+global:
+  labels:
+    app: devsu-java
+  annotations: {}
+  replicas: 2
+  env: dev
+
+app:
+  repository: docker
+  tag: v0.1
+  podSecurityContext:
+    runAsUser: 5000
+    runAsGroup: 5000
+    fsGroup: 5000
+  containerSecurityContext:
+    runAsUser: 5000
+    runAsGroup: 5000
+    allowPrivilegeEscalation: false
+  resources:
+    requests:
+        memory: 128Mi
+        cpu: 250m
+    limits:
+      memory: 256Mi
+      cpu: 500m
+  livenessProbe:
+    exec:
+      command:
+        - /bin/sh
+        - -c
+        - curl http://localhost:8000/api/actuator/health
+    initialDelaySeconds: 30
+    periodSeconds: 5
+    failureThreshold: 8
+  readinessProbe:
+    exec:
+      command:
+        - /bin/sh
+        - -c
+        - curl http://localhost:8000/api/actuator/health
+    initialDelaySeconds: 30
+    periodSeconds: 5
+    failureThreshold: 8
+  ports:
+    - name: java-port
+      servicePort: 80
+      containerPort: 8000
+      protocol: TCP
+
+variables:
+  configmap:
+    - name: NAME_DB
+      value: jdbc:h2:file:./test
+    - name: PORT
+      value: 8000
+  secret:
+    - name: USERNAME_DB
+      value: dXNlcm5hbWUK
+    - name: PASSWORD_DB
+      value: cGFzc3dvcmQK
+
+hpa:
+  minReplicas: 1
+  maxReplicas: 5
+  metrics:
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: 70
+
+ingress:
+  rules:
+    host: devsu-devops.com
+    path: /api
+
